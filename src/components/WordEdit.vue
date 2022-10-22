@@ -20,6 +20,7 @@
           :question="word.question"
           :answer="word.answer"
           @save-wordList="saveListInParent"
+          @delete-wordPair="deleteWordPair"
         ></word-pair>
        </tbody>
     </table>
@@ -43,6 +44,7 @@
         showAddForm: true
       }
     },
+    emits: ['save-wordList', 'update-wordList'],
     methods: {
       toggleShowAddForm() {
         this.showAddForm = !this.showAddForm;
@@ -50,6 +52,11 @@
       saveListInParent(){
         console.log('emit in edit');
         this.$emit('save-wordList');
+      },
+      deleteWordPair(question) {
+        console.log('delete word Pair');
+        const updatedList = this.wordList.filter((item) => item.question !== question);
+        this.$emit('update-wordList', updatedList);
       }
     }
   }

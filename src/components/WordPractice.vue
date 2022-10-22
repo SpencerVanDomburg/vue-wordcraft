@@ -7,7 +7,9 @@
   :usedHints = "totalAmountOfHints"
   @hide-popup = "hidePopup"
 ></popup>
-<h1>{{practiceListLength}} - <span style="color: red">{{totalAmountOfHints}}</span></h1>
+  <h1>{{practiceListLength}} - 
+    <span style="color: red">{{totalAmountOfWrongAnswers}}</span> 
+  </h1>
   <div class="practiceForm">
     <input 
       type="text" 

@@ -13,6 +13,7 @@
     :language="language"
     :wordList="wordList"
     @save-wordList="fetchAndSetList"
+    @update-wordList="updateAndSetList"
   ></word-edit>
 
   <div class="btn-group" role="group" aria-label="Basic outlined example">
@@ -53,6 +54,20 @@ export default {
       .then((response) =>{
         console.log(response);
         this.wordList = response.data.wordPairList;
+      })
+    },
+    updateAndSetList(updatedList) {
+      console.log("updateAndSetList");
+      axios.post(`http://localhost:9080/api/list`,
+      updatedList,
+      {
+        params: {
+          language : this.language
+        }
+      })
+      .then((response) => {
+        console.log(response);
+        this.wordList = response.data;
       })
     }
   },
