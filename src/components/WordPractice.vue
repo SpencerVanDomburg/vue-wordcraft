@@ -1,16 +1,25 @@
 <template>
-  <h1>{{practiceList.length}} - <span style="color: red">{{totalAmountOfHints}}</span></h1>
+<popup
+  v-if="popupIsVisible"
+  :popupIsVisible = "popupIsVisible"
+  :total = "wordList.length"
+  :wrongAnswers = "totalAmountOfWrongAnswers"
+  :usedHints = "totalAmountOfHints"
+  @hide-popup = "hidePopup"
+></popup>
+<h1>{{practiceListLength}} - <span style="color: red">{{totalAmountOfHints}}</span></h1>
   <div class="practiceForm">
     <input 
       type="text" 
       disabled 
-      :value="randomWord.question"
+      :value="randomWordQuestion"
     >
     <input 
       type="text" 
       v-model="givenAnswer" 
-      v-on:keyup.enter="checkAnswer()" 
+      v-on:keyup.enter="checkAnswer()"  
       v-on:keydown.shift="getHint()"
+      v-on:submit.prevent
       :placeholder="hint"
     >
     <button 
@@ -36,7 +45,9 @@
         practiceList: this.wordList,
         hint: '',
         hintCount: 1,
-        totalAmountOfHints: 0
+        totalAmountOfWrongAnswers: 0,
+        totalAmountOfHints: 0,
+        popupIsVisible: false
       }
     },
     props: {
@@ -52,13 +63,31 @@
     watch: {
       wordList() {
         this.practiceList = this.wordList
+      },
+      practiceList(value) {
+        if(value.length < 1) {
+          this.popupIsVisible = true;
+        }
       }
     },
     computed: {
+      practiceListLength() {
+        return this.practiceList ? this.practiceList.length : 0;
+      },
+
       randomWord(){
-        return  this.practiceList[
-          Math.floor(Math.random() * this.practiceList.length)
-        ];
+        const word = this.practiceList ? 
+        this.practiceList[
+          Math.floor(Math.random() * this.practiceListLength)
+        ]  
+        : {
+          "question": "placeholder",
+          "answer": "placeholder"
+          };
+        return word;
+      },
+      randomWordQuestion() {
+        return this.randomWord ? this.randomWord.question : "placeholder";
       }
     },
     methods: {
@@ -71,6 +100,7 @@
           this.hintCount = 1;
         } else {
           alert('Incorrect!');
+          this.totalAmountOfWrongAnswers++;
         }
       },
       getHint() {
@@ -89,7 +119,22 @@
           this.hintCount++;
           this.totalAmountOfHints++;
         })
-      }
+      },
+      showPopup() {
+        this.popupIsVisible = true;
+      },
+      hidePopup() {
+        this.popupIsVisible = false;
+        this.reset();
+      },
+    reset() {
+      this.totalAmountOfWrongAnswers = 0;
+      this.totalAmountOfHints = 0;
+      this.practiceList = this.wordList;
+      this.givenAnswer = '';
+      this.hint = '';
+      this.hintCount = 1;
+    }
     }
   }
 </script>
