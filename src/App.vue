@@ -17,7 +17,7 @@
   ></word-edit>
 
   <div class="btn-group" role="group" aria-label="Basic outlined example">
-  <button @click="changeLanguage('BA')" type="button" class="btn btn-outline-light">Bahasaa</button>
+  <button @click="changeLanguage('BA')" type="button" class="btn btn-outline-light">Bahasa</button>
   <button @click="changeLanguage('FR')" type="button" class="btn btn-outline-light">French</button>
   <button @click="changeLanguage('DE')" type="button" class="btn btn-outline-light">Deutsch</button>
 </div>
