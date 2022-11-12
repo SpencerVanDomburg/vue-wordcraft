@@ -1,5 +1,5 @@
 <template>
-  <form action="">
+  <form action="" class="word-add">
     <input 
       v-model="addQuestion" 
       type="text"
@@ -12,7 +12,7 @@
       v-on:keyup.enter="handleSubmit()" 
     >
     <button 
-      @click="handleSubmit()"
+      @click.prevent="handleSubmit()"
       class="btn btn-success"  
     >submit</button>
   </form>
@@ -52,21 +52,25 @@
       },
       saveList(updatedList) {
         console.log('inside saveList');
-        axios.post(`http://localhost:9080/api/list`,
-          updatedList,
-          {
+        axios.put(`http://localhost:8082/api/list`,
+        {
+          language: this.language,
+          name: "default",
+          wordPairs: updatedList
+        },
+        {
           params: {
             language: this.language
           }        
-           })
+        })
         .then((response) =>{
           console.log(response);
-          this.saveListInParent();
+          this.saveListInParent(response.data.wordPairs);
         })
       },
-      saveListInParent(){
+      saveListInParent(updatedList){
         console.log('emit in add');
-        this.$emit('save-wordList');
+        this.$emit('save-wordList', updatedList);
       }
     }
   }
@@ -79,6 +83,12 @@
     width: 40%;
     margin: auto;
     
+  }
+
+  .word-add{
+    padding: 1rem;
+    border: 1px dotted white;
+    border-radius: 5px;
   }
 
   form input {

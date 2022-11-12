@@ -12,14 +12,22 @@
     v-if="!isPractice"
     :language="language"
     :wordList="wordList"
-    @save-wordList="fetchAndSetList"
+    @save-wordList="setList"
     @update-wordList="updateAndSetList"
   ></word-edit>
 
+  <div v-if="listNames" class="list-names">
+    <ul>
+      <li v-for="name in listNames" :key="name">
+        <button @click="changeListName(name)">{{name}}</button>
+      </li>
+    </ul>
+  </div>
+
   <div class="btn-group" role="group" aria-label="Basic outlined example">
-  <button @click="changeLanguage('BA')" type="button" class="btn btn-outline-light">Bahasa</button>
-  <button @click="changeLanguage('FR')" type="button" class="btn btn-outline-light">French</button>
-  <button @click="changeLanguage('DE')" type="button" class="btn btn-outline-light">Deutsch</button>
+  <button @click="changeLanguage('BA')" type="button" class="btn btn-outline-light" :style="{background: this.language === 'BA'? '#198754' : 'none'}">Bahasa</button>
+  <button @click="changeLanguage('FR')" type="button" class="btn btn-outline-light" :style="{background: this.language === 'FR'? '#198754' : 'none'}">French</button>
+  <button @click="changeLanguage('DE')" type="button" class="btn btn-outline-light" :style="{background: this.language === 'DE'? '#198754' : 'none'}">Deutsch</button>
 </div>
 </template>
 
@@ -32,47 +40,86 @@ export default {
   data () {
     return {
       isPractice: false,
-        language: 'BA',
-        wordList: []
+      language: 'BA',
+      currentListName: 'default',
+      wordList: [],
+      listNames: []
     }
   },
+  computed: {
+    
+  },
   methods: {
+    activeButtonStyle(lang) {
+      if(lang === this.language) {
+        return 'green';
+      }
+      return 'none';
+    },
     togglePractice() {
       this.isPractice = !this.isPractice;
     },
     changeLanguage(language){
       this.language = language;
+      this.getListNames();
       this.fetchAndSetList();
     },
-    fetchAndSetList(){
-      console.log("fetchAndSetList");
-       axios.get(`http://localhost:9080/api/list`,{
+    changeListName(name){
+      this.currentListName = name;
+      this.fetchAndSetList(); 
+    },
+    getListNames(){
+      console.log("getListNames");
+      axios.get(`http://localhost:8082/api/list/names`,{
         params: {
           language: this.language
         }
       })
       .then((response) =>{
+        console.log(response.data);
+        this.listNames = response.data;
+      })
+    },
+
+    fetchAndSetList(){
+      console.log("fetchAndSetList");
+       axios.get(`http://localhost:8082/api/list`,{
+        params: {
+          language: this.language,
+          name: this.currentListName
+        }
+      })
+      .then((response) =>{
         console.log(response);
-        this.wordList = response.data.wordPairList;
+        this.wordList = response.data.wordPairs;
       })
     },
     updateAndSetList(updatedList) {
       console.log("updateAndSetList");
-      axios.post(`http://localhost:9080/api/list`,
-      updatedList,
+      axios.put(`http://localhost:8082/api/list`,
+      {
+        language: this.language,
+        name: this.currentListName,
+        wordPairs: updatedList
+      },
       {
         params: {
-          language : this.language
-        }
+          language: this.language
+       }        
       })
       .then((response) => {
         console.log(response);
-        this.wordList = response.data;
+        this.wordList = response.data.wordPairs;
       })
+    },
+    setList(updatedList){
+      console.log("set List");
+      this.wordList = updatedList;
     }
   },
   beforeMount(){
     console.log('before mount');
+    this.getListNames();
     this.fetchAndSetList();
   },
   name: 'App',
@@ -114,9 +161,37 @@ export default {
 }
 
 .btn-group {
-  margin-top: 2rem;
+  /* margin-top: 2rem; */
   margin-bottom: 10rem;
-  
 }
+
+.container {
+  margin-bottom: 2rem;
+}
+
+.list-names {
+  text-align: center;
+  width: 30%;
+  margin: auto;
+}
+
+.list-names ul {
+  display: flex;
+  flex-direction: row;
+  list-style: none;
+}
+
+.list-names ul button {
+  all: unset;
+  margin-right: 1rem;
+  margin-left: 1rem;
+  text-decoration: underline;
+}
+
+.list-names ul button:hover {
+  cursor: pointer;
+  text-decoration: none;
+}
+
 
 </style>

@@ -1,5 +1,3 @@
-
-
 <template>
   <tr>
     <td>{{question}}</td>
@@ -38,7 +36,6 @@
 </script>
 
 <style>
-
   td {
       font-size: large;
       text-align: left;

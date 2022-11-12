@@ -107,16 +107,12 @@
       },
       getHint() {
         this.givenAnswer = '';
-        axios.put(`http://localhost:9080/api/hint/${this.hintCount}`,
+        axios.put(`http://localhost:8082/api/hint/${this.hintCount}`,
         {
           question: this.randomWord.question.toLowerCase(),
           answer: this.randomWord.answer.toLowerCase()
-        },
-        {
-          params: {
-            language: this.language
-          }
-        }).then((response) => {
+        }
+        ).then((response) => {
           this.hint = response.data.hint;
           this.hintCount++;
           this.totalAmountOfHints++;
@@ -147,6 +143,7 @@
     flex-direction: column;
     width: 60%;
     margin: auto;
+    margin-bottom: 2rem;
   }
 
   .practiceForm input {

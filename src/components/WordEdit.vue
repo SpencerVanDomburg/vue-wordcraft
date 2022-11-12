@@ -11,6 +11,7 @@
         <tr>
           <th scope="col">Question</th>
           <th scope="col">Answer</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -49,9 +50,9 @@
       toggleShowAddForm() {
         this.showAddForm = !this.showAddForm;
       },
-      saveListInParent(){
+      saveListInParent(updatedList){
         console.log('emit in edit');
-        this.$emit('save-wordList');
+        this.$emit('save-wordList', updatedList);
       },
       deleteWordPair(question) {
         console.log('delete word Pair');
@@ -87,8 +88,17 @@ tr {
   height: 2rem;
 }
 
+td {
+  min-width: 8rem;
+}
+
+td:last-child {
+  text-align: center;
+}
+
 th {
   font-weight:900;
-  text-align: left;
+  min-width: 8rem;
 }
+
 </style>
